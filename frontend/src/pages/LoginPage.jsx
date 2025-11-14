@@ -47,7 +47,7 @@ export const LoginPage = () => {
 
         {/* TODO: Mostrar este div cuando haya error */}
         {error && (
-          <div className="hidden bg-red-100 text-red-700 p-3 rounded mb-4">
+          <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
             <p className="text-sm">
               Credenciales incorrectas. Intenta nuevamente.
             </p>
