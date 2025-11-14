@@ -5,9 +5,8 @@ export const RegisterPage = () => {
   // TODO: Integrar lógica de registro aquí
   // TODO: Implementar useForm para el manejo del formulario
   // TODO: Implementar función handleSubmit
-  const navigate = useNavigate;
+  const navigate = useNavigate();
   const { formState, handleChange, handleReset } = useForm({
-    username: "",
     name: "",
     lastname: "",
     username: "",
@@ -15,10 +14,24 @@ export const RegisterPage = () => {
     password: "",
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    navigate("/login");
+    try {
+      const response = await fetch("http://localhost:3000/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(formState),
+      });
+      console.log("probando que funcione");
+
+      if (response) {
+        navigate("/login");
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   return (
@@ -35,11 +48,7 @@ export const RegisterPage = () => {
           </p>
         </div>
 
-        <form
-          onSubmit={(event) => {
-            handleSubmit;
-          }}
-        >
+        <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
               htmlFor="username"
