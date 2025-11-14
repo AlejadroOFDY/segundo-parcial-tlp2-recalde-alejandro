@@ -1,9 +1,41 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useForm } from "../hooks/useForm";
+import { useState } from "react";
 
 export const LoginPage = () => {
   // TODO: Integrar lógica de autenticación aquí
   // TODO: Implementar useForm para el manejo del formulario
   // TODO: Implementar función handleSubmit
+  const { formState, handleChange, handleReset } = useForm({
+    username: "",
+    password: "",
+  });
+
+  const navigate = useNavigate();
+
+  const [error, setError] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(false);
+
+    try {
+      const response = await fetch("http://localhost:3000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(formState),
+      });
+
+      if (response.ok) {
+        navigate("/home");
+      } else {
+        setError(true);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8">
@@ -14,13 +46,15 @@ export const LoginPage = () => {
         </h2>
 
         {/* TODO: Mostrar este div cuando haya error */}
-        <div className="hidden bg-red-100 text-red-700 p-3 rounded mb-4">
-          <p className="text-sm">
-            Credenciales incorrectas. Intenta nuevamente.
-          </p>
-        </div>
+        {error && (
+          <div className="hidden bg-red-100 text-red-700 p-3 rounded mb-4">
+            <p className="text-sm">
+              Credenciales incorrectas. Intenta nuevamente.
+            </p>
+          </div>
+        )}
 
-        <form onSubmit={(event) => {}}>
+        <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
               htmlFor="username"
@@ -31,6 +65,8 @@ export const LoginPage = () => {
             <input
               type="text"
               id="username"
+              value={formState.username}
+              onChange={handleChange}
               name="username"
               placeholder="Ingresa tu usuario"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -48,6 +84,8 @@ export const LoginPage = () => {
             <input
               type="password"
               id="password"
+              value={formState.password}
+              onChange={handleChange}
               name="password"
               placeholder="Ingresa tu contraseña"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
