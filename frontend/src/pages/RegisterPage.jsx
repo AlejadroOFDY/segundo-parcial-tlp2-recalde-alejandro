@@ -1,12 +1,16 @@
 import { Link, useNavigate } from "react-router";
 import { useForm } from "../hooks/useForm";
+import { useState } from "react";
 
 export const RegisterPage = () => {
   // TODO: Integrar lógica de registro aquí
   // TODO: Implementar useForm para el manejo del formulario
   // TODO: Implementar función handleSubmit
   const navigate = useNavigate();
-  const { formState, handleChange, handleReset } = useForm({
+
+  const [error, setError] = useState(false);
+
+  const { formState, handleChange } = useForm({
     name: "",
     lastname: "",
     username: "",
@@ -16,6 +20,7 @@ export const RegisterPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(false);
 
     try {
       const response = await fetch("http://localhost:3000/api/register", {
@@ -24,10 +29,11 @@ export const RegisterPage = () => {
         credentials: "include",
         body: JSON.stringify(formState),
       });
-      console.log("probando que funcione");
 
       if (response) {
         navigate("/login");
+      } else {
+        setError(true);
       }
     } catch (error) {
       console.log(error.message);
@@ -41,12 +47,14 @@ export const RegisterPage = () => {
           Crear Cuenta
         </h2>
 
-        {/* TODO: Mostrar este div cuando haya error */}
-        <div className="hidden bg-red-100 text-red-700 p-3 rounded mb-4">
-          <p className="text-sm">
-            Error al crear la cuenta. Intenta nuevamente.
-          </p>
-        </div>
+        {/* Mostrar este div cuando haya error */}
+        {error && (
+          <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
+            <p className="text-sm">
+              Error al crear la cuenta. Intenta nuevamente.
+            </p>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
